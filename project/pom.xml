@@ -60,6 +60,14 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- PostgreSQL Driver (课设默认 profile 用) -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.7.3</version>
+            <scope>runtime</scope>
+        </dependency>
+
         <!-- JWT -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>

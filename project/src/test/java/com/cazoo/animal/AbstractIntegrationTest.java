@@ -26,20 +26,14 @@ import org.springframework.transaction.annotation.Transactional;
  * 集成测试基类。
  * <p>
  * H2 兼容性说明:
- * 1) H2 2.x 即使在 MODE=MySQL 下也把 USER 视为保留字,导致
- *    {@code spring.sql.init} 在 context 启动阶段跑 init-test.sql 时
- *    {@code DROP TABLE IF EXISTS user} 解析失败。解决:在测试 class 上用
- *    {@code spring.sql.init.mode=never} 关闭 spring.sql.init 阶段,
- *    改由本类 {@link #initSchema()} 用 JdbcTemplate 手动建表(对 user 加引号)。
- * 2) MyBatis-Plus 3.5.7 生成的 {@code DELETE FROM user} 不会加引号,
- *    必须让 H2 不再把 USER 视作关键字。解决:在 datasource URL 追加
- *    {@code ;NON_KEYWORDS=USER}。这里通过 {@code @SpringBootTest(properties=...)}
- *    覆盖 URL,不动 application.yml。
+ * User 实体类 {@code @TableName("\"user\"")},MyBatis-Plus 生成的
+ * {@code DELETE FROM "user"} / {@code INSERT INTO "user"} 是带引号小写形式。
+ * 因此测试 schema 也必须用带引号的 "user" 标识符,否则 H2 找不到表。
  */
 @SpringBootTest(properties = {
         "spring.sql.init.mode=never",
         "spring.sql.init.schema-locations=",
-        "spring.datasource.url=jdbc:h2:mem:test;MODE=MySQL;DB_CLOSE_DELAY=-1;NON_KEYWORDS=USER"
+        "spring.datasource.url=jdbc:h2:mem:test;MODE=MySQL;DB_CLOSE_DELAY=-1"
 })
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
@@ -83,10 +77,9 @@ public abstract class AbstractIntegrationTest {
         jdbcTemplate.execute("DROP ALL OBJECTS");
 
         // 业务 schema(等价 init-test.sql)
-        // 注意:由于 datasource URL 设了 NON_KEYWORDS=USER,user 已是普通 identifier;
-        // 不带引号的 user 会被 H2 upper 化为 USER,正好与 MyBatis-Plus 生成的
-        // DELETE FROM user (parser 后大写化为 USER) 匹配。
-        jdbcTemplate.execute("CREATE TABLE user (" +
+        // user 全部加双引号,与 User 实体 @TableName("\"user\"") 对齐;
+        // 这样 MyBatis-Plus 生成的 DELETE/INSERT/SELECT "user" 都能命中 H2 的 "user" 表。
+        jdbcTemplate.execute("CREATE TABLE \"user\" (" +
                 "  id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
                 "  username VARCHAR(50) NOT NULL," +
                 "  password VARCHAR(100) NOT NULL," +
@@ -94,7 +87,7 @@ public abstract class AbstractIntegrationTest {
                 "  role VARCHAR(20) NOT NULL," +
                 "  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP" +
                 ")");
-        jdbcTemplate.execute("CREATE UNIQUE INDEX uk_username ON user(username)");
+        jdbcTemplate.execute("CREATE UNIQUE INDEX uk_username ON \"user\"(username)");
 
         jdbcTemplate.execute("CREATE TABLE animal (" +
                 "  id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
@@ -119,7 +112,7 @@ public abstract class AbstractIntegrationTest {
         jdbcTemplate.execute("CREATE INDEX idx_animal_created ON check_in(animal_id, created_at)");
         jdbcTemplate.execute("CREATE INDEX idx_user ON check_in(user_id)");
         jdbcTemplate.execute("ALTER TABLE check_in ADD CONSTRAINT fk_checkin_animal FOREIGN KEY (animal_id) REFERENCES animal(id)");
-        jdbcTemplate.execute("ALTER TABLE check_in ADD CONSTRAINT fk_checkin_user FOREIGN KEY (user_id) REFERENCES user(id)");
+        jdbcTemplate.execute("ALTER TABLE check_in ADD CONSTRAINT fk_checkin_user FOREIGN KEY (user_id) REFERENCES \"user\"(id)");
     }
 
     private void seed() {
@@ -129,7 +122,7 @@ public abstract class AbstractIntegrationTest {
         userMapper.delete(null);
 
         // 重置 AUTO_INCREMENT,保证后续测试断言 id=1 等成立
-        jdbcTemplate.execute("ALTER TABLE user ALTER COLUMN id RESTART WITH 1");
+        jdbcTemplate.execute("ALTER TABLE \"user\" ALTER COLUMN id RESTART WITH 1");
         jdbcTemplate.execute("ALTER TABLE animal ALTER COLUMN id RESTART WITH 1");
         jdbcTemplate.execute("ALTER TABLE check_in ALTER COLUMN id RESTART WITH 1");
 

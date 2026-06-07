@@ -5,15 +5,12 @@ server:
       charset: UTF-8
       enabled: true
       force: true
+      force-request: true
+      force-response: true
 
 spring:
   application:
     name: campus-stray-animal
-  datasource:
-    url: jdbc:mysql://localhost:3306/campus_animal?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
-    username: ${DB_USERNAME:root}
-    password: ${DB_PASSWORD:root}   # 本地默认 root,生产用环境变量
-    driver-class-name: com.mysql.cj.jdbc.Driver
   servlet:
     multipart:
       max-file-size: 5MB
@@ -22,7 +19,7 @@ spring:
     resources:
       static-locations: classpath:/static/,file:${app.upload-dir}/
   profiles:
-    active: dev
+    active: pgsql   # 课设环境默认走 pgsql profile(无参数启动)
 
 app:
   upload-dir: ${app.upload.dir:${user.dir}/uploads}
@@ -32,20 +29,26 @@ app:
     header: Authorization
     prefix: "Bearer "
 
+# MyBatis-Plus 全局配置:基础项放主 yml,具体方言(db-type)由各 profile 覆盖
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   global-config:
     db-config:
+      id-type: auto
       logic-delete-field: deleted
       logic-delete-value: 1
       logic-not-delete-value: 0
 
 logging:
   level:
-    com.cazoo.animal: DEBUG
+    com.cazoo.animal: INFO
     org.springframework.security: INFO
+
+# 显式告诉 Spring 用 UTF-8 处理所有 HTTP 消息(包含 JSON)
+spring.mvc.servlet:
+  load-on-startup: 1
 
 ---
 spring:

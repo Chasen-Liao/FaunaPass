@@ -55,6 +55,7 @@ public class AnimalService {
         a.setName(req.getName());
         a.setType(req.getType().getCode());
         a.setArea(req.getArea());
+        a.setUpdatedAt(java.time.LocalDateTime.now()); // PG 不靠触发器,应用层维护
         if (req.getCover() != null && !req.getCover().isEmpty()) {
             a.setCoverImage(fileStorageService.saveAnimalCover(req.getCover()));
         }

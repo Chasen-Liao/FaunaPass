@@ -25,7 +25,7 @@ public interface CheckInMapper extends BaseMapper<CheckIn> {
             c.animal_id       AS animalId,
             a.name            AS animalName
         FROM check_in c
-        LEFT JOIN user   u ON c.user_id   = u.id
+        LEFT JOIN "user"   u ON c.user_id   = u.id
         LEFT JOIN animal a ON c.animal_id = a.id
         WHERE c.animal_id = #{animalId}
         ORDER BY c.created_at DESC

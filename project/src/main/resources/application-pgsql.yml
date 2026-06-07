@@ -1,0 +1,36 @@
+spring:
+  config:
+    activate:
+      on-profile: pgsql
+  datasource:
+    url: jdbc:postgresql://localhost:5432/campus_animal?stringtype=unspecified&charSet=UTF-8&clientEncoding=UTF-8
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:}
+    driver-class-name: org.postgresql.Driver
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db/init-pg.sql
+      continue-on-error: false
+
+app:
+  upload-dir: ${user.dir}/uploads
+  jwt:
+    secret: ${JWT_SECRET:dev-only-secret-please-replace-32bytes-min!!}
+    expire-hours: 24
+    header: Authorization
+    prefix: "Bearer "
+
+mybatis-plus:
+  global-config:
+    db-config:
+      db-type: postgresql
+      id-type: auto
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+logging:
+  level:
+    com.cazoo.animal: INFO
+    org.springframework.security: INFO

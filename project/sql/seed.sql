@@ -1,10 +1,8 @@
 -- =============================================================================
--- 校园流浪动物图鉴与动态打卡系统 - 种子数据脚本
--- 前置: 已执行 init.sql,数据库 campus_animal 已存在
+-- 校园流浪动物图鉴与动态打卡系统 - 种子数据脚本(PostgreSQL 兼容版)
+-- 前置: 已执行 init.sql,数据库 campus_animal 已存在且三张表已建
 -- 来源: docs/superpowers/specs/2026-06-07-campus-stray-animal-system-design.md §4.4
 -- =============================================================================
-
-USE campus_animal;
 
 -- -----------------------------------------------------------------------------
 -- 1. 用户种子(3 个,密码均为 BCrypt 10 轮哈希)
@@ -12,15 +10,17 @@ USE campus_animal;
 --      admin     / admin123   (ADMIN   - 系统管理员)
 --      student01 / 123456     (STUDENT - 张三)
 --      student02 / 123456     (STUDENT - 李四)
---    哈希由 Spring Security 6.3.4 的 BCryptPasswordEncoder(强度 10)实时生成,
---    经 matches() 验证通过,可直接用于登录校验。
---    注意: BCrypt 每次编码会加随机盐,即使是同一明文,多次 encode() 输出不同,
---    但所有输出对同一明文 matches() 都返回 true。本脚本写入的是一次性生成值。
 -- -----------------------------------------------------------------------------
-INSERT INTO user (id, username, password, nickname, role) VALUES
+-- PG 关键字 "user" 在 INSERT 里要加双引号;显式指定 id 避免 BIGSERIAL 序列自增干扰
+INSERT INTO "user" (id, username, password, nickname, role) VALUES
   (1, 'admin',     '$2a$10$phN770udqqlg8XmpztPRReIAp66P94CreOWGpiZfLEyb3OtzQ2uI2', '系统管理员', 'ADMIN'),
   (2, 'student01', '$2a$10$XoJyDmw28JOOGBgFnLLYNujPtt8ZpB79z0d15Wds0/vQvNH5IoFJm', '张三',      'STUDENT'),
   (3, 'student02', '$2a$10$XoJyDmw28JOOGBgFnLLYNujPtt8ZpB79z0d15Wds0/vQvNH5IoFJm', '李四',      'STUDENT');
+
+-- 重置 BIGSERIAL 序列,让后续显式不指定 id 的 INSERT 从 4/4/10 开始递增
+SELECT setval('user_id_seq',    3, true);
+SELECT setval('animal_id_seq',  4, true);
+SELECT setval('check_in_id_seq', 9, true);
 
 -- -----------------------------------------------------------------------------
 -- 2. 动物档案种子(4 只,无封面图,演示时管理员再上传)
@@ -33,7 +33,7 @@ INSERT INTO animal (id, name, type, area, cover_image) VALUES
 
 -- -----------------------------------------------------------------------------
 -- 3. 打卡种子(每只动物 2-3 条,便于演示时间轴倒序聚合)
---    注意: 写入顺序按 animal_id 与时间混排,执行时按 animal_id, created_at 即可。
+--    时间戳采用 PG 可识别的字面量 'YYYY-MM-DD HH24:MI:SS'
 -- -----------------------------------------------------------------------------
 INSERT INTO check_in (animal_id, user_id, content, created_at) VALUES
   (1, 2, '今天在图书馆草坪看到它了,精神不错,在晒太阳',     '2026-05-20 10:30:00'),
