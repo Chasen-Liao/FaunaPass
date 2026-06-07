@@ -1,1 +1,97 @@
-/~$251102132廖朝正综合课程设计II课程设计报告A.doc
+# ============================================================
+# Java / Maven / Spring Boot 通用忽略（综合课程设计 II）
+# ============================================================
+
+# ---- Maven ----
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# ---- Java / IDE ----
+*.class
+*.log
+hs_err_pid*
+replay_pid*
+*.hprof
+
+# ---- IntelliJ IDEA ----
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# ---- Eclipse ----
+.classpath
+.project
+.settings/
+.factorypath
+.apt_generated/
+
+# ---- VS Code ----
+.vscode/
+.classpath
+
+# ---- Spring Boot ----
+HELP.md
+application-*.yml
+!application.yml
+!application-dev.yml
+!application-prod.yml
+application-local.yml
+
+# 上传文件 / 运行时数据
+uploads/
+logs/
+*.log
+spring.log
+
+# ---- OS ----
+.DS_Store
+Thumbs.db
+desktop.ini
+ehthumbs.db
+$RECYCLE.BIN/
+
+# ---- Office 临时文件 ----
+~$*.doc
+~$*.docx
+~$*.xls
+~$*.xlsx
+~$*.ppt
+~$*.pptx
+*.tmp
+
+# ---- Node（前端工程若放同仓库） ----
+node_modules/
+dist/
+build/
+.parcel-cache/
+.npm
+.eslintcache
+.vite/
+
+# ---- 敏感信息 ----
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+
+# ---- Docker ----
+docker-compose.override.yml
+
+# ---- 测试 / 覆盖率 ----
+*.lcov
+.coverage
+coverage/
+test-output/
+.nyc_output/
