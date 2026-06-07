@@ -1,0 +1,63 @@
+server:
+  port: 8080
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+spring:
+  application:
+    name: campus-stray-animal
+  datasource:
+    url: jdbc:mysql://localhost:3306/campus_animal?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:root}   # 本地默认 root,生产用环境变量
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 10MB
+  web:
+    resources:
+      static-locations: classpath:/static/,file:${app.upload-dir}/
+  profiles:
+    active: dev
+
+app:
+  upload-dir: ${app.upload.dir:${user.dir}/uploads}
+  jwt:
+    secret: ${JWT_SECRET:dev-only-secret-please-replace-32bytes-min!!}
+    expire-hours: 24
+    header: Authorization
+    prefix: "Bearer "
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+logging:
+  level:
+    com.cazoo.animal: DEBUG
+    org.springframework.security: INFO
+
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+  datasource:
+    url: jdbc:h2:mem:test;MODE=MySQL;DB_CLOSE_DELAY=-1
+    username: sa
+    password: ""
+    driver-class-name: org.h2.Driver
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db/init-test.sql

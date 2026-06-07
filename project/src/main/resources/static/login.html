@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>登录 - 校园流浪动物图鉴</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="auth-page">
+  <div class="auth-card">
+    <h1 class="auth-title">🐾 校园流浪动物图鉴</h1>
+    <p class="auth-subtitle">请登录后继续</p>
+
+    <form id="login-form" autocomplete="off">
+      <div class="form-group">
+        <label class="form-label" for="username">账号</label>
+        <input type="text" id="username" name="username" required maxlength="50" autofocus />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="password">密码</label>
+        <input type="password" id="password" name="password" required maxlength="100" />
+      </div>
+      <div class="error-text" id="err-msg"></div>
+      <button type="submit" class="btn btn-primary btn-block" id="btn-submit">登录</button>
+    </form>
+
+    <p class="auth-footer">
+      还没有账号？<a href="/register.html">注册一个学生账号</a>
+    </p>
+
+    <div class="auth-tips">
+      <div style="margin-bottom:6px;font-weight:500;color:#c9d1d9;">演示账号:</div>
+      <div>管理员 <code>admin</code> / <code>admin123</code></div>
+      <div>学生 <code>student01</code> / <code>123456</code></div>
+      <div>学生 <code>student02</code> / <code>123456</code></div>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/util.js"></script>
+  <script>
+    (function () {
+      // 已登录则自动跳到对应主页
+      const u = getCurrentUser();
+      if (u && getToken()) {
+        redirectByRole(u);
+        return;
+      }
+
+      const form = $('login-form');
+      const btn = $('btn-submit');
+      const err = $('err-msg');
+
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        clearError(err);
+        const username = $('username').value.trim();
+        const password = $('password').value;
+        if (!username || !password) {
+          showError(err, '账号和密码不能为空');
+          return;
+        }
+        btn.disabled = true;
+        btn.textContent = '登录中...';
+        try {
+          const data = await login(username, password);
+          redirectByRole({ role: data.role });
+        } catch (e2) {
+          showError(err, e2.message || '登录失败');
+          btn.disabled = false;
+          btn.textContent = '登录';
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

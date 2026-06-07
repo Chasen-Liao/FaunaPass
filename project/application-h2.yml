@@ -1,0 +1,29 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:campus;MODE=MySQL;DB_CLOSE_DELAY=-1;NON_KEYWORDS=USER
+    username: sa
+    password: ""
+    driver-class-name: org.h2.Driver
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db/init-test.sql
+
+app:
+  upload-dir: ${java.io.tmpdir}/animal-uploads
+  jwt:
+    secret: dev-only-secret-please-replace-32bytes-min!!
+    expire-hours: 24
+    header: Authorization
+    prefix: "Bearer "
+
+mybatis-plus:
+  global-config:
+    db-config:
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+logging:
+  level:
+    com.cazoo.animal: INFO

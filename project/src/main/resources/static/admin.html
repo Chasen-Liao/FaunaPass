@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>校园流浪动物图鉴 - 管理后台</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <nav class="navbar"></nav>
+
+  <div class="container">
+    <div class="layout-two-col">
+      <!-- 左侧:动物列表 + 工具栏 -->
+      <section>
+        <div class="card">
+          <div class="card-title">
+            <span>动物档案管理</span>
+            <button type="button" class="btn btn-primary btn-sm" id="btn-new">+ 新增</button>
+          </div>
+
+          <div class="toolbar">
+            <input type="text" id="filter-name" placeholder="名字前缀" maxlength="50" />
+            <select id="filter-type">
+              <option value="">全部类型</option>
+              <option value="CAT">猫</option>
+              <option value="DOG">狗</option>
+            </select>
+            <button type="button" class="btn" id="btn-search">搜索</button>
+            <button type="button" class="btn btn-secondary" id="btn-reset">重置</button>
+          </div>
+
+          <ul class="animal-list" id="animal-list">
+            <li class="loading">加载中...</li>
+          </ul>
+
+          <div class="pagination" id="pagination" style="display:none;">
+            <button type="button" class="btn" id="btn-prev">上一页</button>
+            <span class="page-info" id="page-info">第 1 页</span>
+            <button type="button" class="btn" id="btn-next">下一页</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 右侧:表单 -->
+      <section>
+        <div class="card" id="form-card">
+          <div class="card-title">
+            <span id="form-title">新增动物档案</span>
+            <span id="form-mode-tip" style="font-size:12px;color:#8b949e;font-weight:400;"></span>
+          </div>
+
+          <form id="animal-form" autocomplete="off">
+            <input type="hidden" id="animal-id" value="" />
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="f-name">名字 <span class="required">*</span></label>
+                <input type="text" id="f-name" maxlength="50" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="f-type">类型 <span class="required">*</span></label>
+                <select id="f-type" required>
+                  <option value="">请选择</option>
+                  <option value="CAT">猫</option>
+                  <option value="DOG">狗</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="f-area">常驻区域 <span class="required">*</span></label>
+              <input type="text" id="f-area" maxlength="100" placeholder="如:图书馆草坪、西区食堂" required />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="f-cover">封面照片</label>
+              <input type="file" id="f-cover" accept="image/jpeg,image/png,image/gif,image/webp" />
+              <div class="form-hint">仅支持 jpg / png / gif / webp,单文件不超过 5MB。编辑时不选则保留原图</div>
+              <div class="image-preview" id="cover-preview">未选择图片</div>
+            </div>
+
+            <div class="error-text" id="form-err"></div>
+
+            <div class="btn-group">
+              <button type="submit" class="btn btn-primary" id="btn-submit">提交</button>
+              <button type="button" class="btn btn-secondary" id="btn-cancel">重置/取消编辑</button>
+            </div>
+          </form>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/util.js"></script>
+  <script src="/js/admin.js"></script>
+</body>
+</html>

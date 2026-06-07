@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>校园流浪动物图鉴 - 学生端</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <nav class="navbar"></nav>
+
+  <div class="container">
+    <div class="layout-two-col">
+      <!-- 左侧:动物列表 -->
+      <section>
+        <div class="card">
+          <div class="card-title">动物图鉴</div>
+
+          <div class="toolbar">
+            <input type="text" id="filter-name" placeholder="名字前缀" maxlength="50" />
+            <select id="filter-type">
+              <option value="">全部类型</option>
+              <option value="CAT">猫</option>
+              <option value="DOG">狗</option>
+            </select>
+            <button type="button" class="btn" id="btn-search">搜索</button>
+            <button type="button" class="btn btn-secondary" id="btn-reset">重置</button>
+          </div>
+
+          <ul class="animal-list" id="animal-list">
+            <li class="loading">加载中...</li>
+          </ul>
+
+          <div class="pagination" id="pagination" style="display:none;">
+            <button type="button" class="btn" id="btn-prev">上一页</button>
+            <span class="page-info" id="page-info">第 1 页</span>
+            <button type="button" class="btn" id="btn-next">下一页</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 右侧:详情 + 时间轴 + 打卡表单 -->
+      <section>
+        <div class="card" id="detail-card">
+          <div class="card-empty">← 从左侧选择一只动物查看详情</div>
+        </div>
+
+        <div class="card" id="checkin-card" style="display:none;">
+          <div class="card-title">发布打卡</div>
+          <form id="checkin-form" autocomplete="off">
+            <div class="form-group">
+              <label class="form-label" for="checkin-content">
+                打卡内容 <span class="required">*</span>
+              </label>
+              <textarea
+                id="checkin-content"
+                rows="4"
+                maxlength="500"
+                placeholder="今天在教学楼下看到它了,喂了根猫条,精神状态良好..."
+                required></textarea>
+              <span class="char-counter" id="char-counter">0 / 500</span>
+            </div>
+            <div class="error-text" id="checkin-err"></div>
+            <button type="submit" class="btn btn-primary" id="btn-publish">发布打卡</button>
+          </form>
+        </div>
+
+        <div class="card" id="timeline-card" style="display:none;">
+          <div class="card-title">
+            <span>近况时间轴</span>
+            <span id="timeline-count" style="font-size:12px;color:#8b949e;font-weight:400;"></span>
+          </div>
+          <ul class="timeline" id="timeline">
+            <li class="loading">加载中...</li>
+          </ul>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/util.js"></script>
+  <script src="/js/index.js"></script>
+</body>
+</html>
